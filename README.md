@@ -1,24 +1,9 @@
 # 🗺️ APE 4 — Grafos: Mapa del Campus UTA
 
 **Universidad Técnica de Ambato — Facultad de Ingeniería en Sistemas**
-**Materia:** Estructura de Datos | **Paralelo:** 3ro B Software
+**Materia:** Estructura de Datos
+**Paralelo:** 3ro B Software
 **Autor:** Luis Manobanda
-
----
-
-## 📋 Tabla de Contenidos
-
-1. Objetivo
-2. Descripción del Problema
-3. Estructura del Grafo
-4. Actividades Realizadas
-5. Implementación
-6. Conceptos Clave
-7. Resultados Obtenidos
-8. Análisis Comparativo
-9. Compilación y Ejecución
-10. Estructura del Proyecto
-11. Autor
 
 ---
 
@@ -68,7 +53,7 @@ usando dos criterios distintos:
 Universidad (uta)
   │
   ├──[50]── FISEI ──[40]── Idiomas ──[30]── Biblioteca ──[70]── Estadio
-  │                                                         ▲
+  │                                                        ▲
   └──[20]── Comedor ───────────────────────────────[200]───┘
 ```
 
@@ -222,12 +207,12 @@ while (!cola.isEmpty()) {
 ### Salida en consola
 
 ```text
-╔══════════════════════════════════════════════════════╗
-║        Universidad Tecnica de Ambato - FISEI         ║
-║        APE 4 - Grafos: Mapa del Campus UTA           ║
-║        Estructura de Datos - 3ro B Software          ║
-║        Autor : Luis Manobanda                        ║
-╚══════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════╗
+║         Universidad Tecnica de Ambato - FISEI          ║
+║         APE 4 - Grafos: Mapa del Campus UTA            ║
+║         Estructura de Datos - 3ro B Software           ║
+║         Autor : Luis Manobanda                         ║
+╚════════════════════════════════════════════════════════╝
 
 ╔════════════════════════════════════════════════════════╗
 ║  PASO 4 - BFS (Ruta con menos paradas)                 ║
