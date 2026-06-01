@@ -199,10 +199,8 @@ fisei      → [uta (50m), idiomas (40m)]
 idiomas    → [fisei (40m), biblioteca (30m)]
 biblioteca → [idiomas (30m), estadio (70m)]
 estadio    → [biblioteca (70m), comedor (200m)]
+comedor    → [uta (20m), estadio (200m)]
 ```
-
-  comedor    → [uta (20m), estadio (200m)]
-
 ---
 
 ## 📊 Resultados Obtenidos
