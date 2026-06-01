@@ -66,9 +66,9 @@ usando dos criterios distintos:
 
   Universidad (uta)
       │
-      ├──[50]── FISEI ──[40]── Idiomas ──[30]── Biblioteca ──[70]── Estadio
+      ├──[50]── FISEI ──[40]── Idiomas ──[30]── Biblioteca ──[70]── Estadio ###
       │                                                                  ▲
-      └──[20]── Comedor ─────────────────────────────────[200]──────────┘
+      └──[20]── Comedor ─────────────────────────────────[200]───────────┘
 
   Nota: Las aristas son no dirigidas (bidireccionales).
 
