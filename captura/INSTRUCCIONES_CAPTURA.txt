@@ -1,0 +1,23 @@
+INSTRUCCIONES PARA CAPTURAS DE PANTALLA
+========================================
+
+1. Abre una terminal en la carpeta src/
+2. Ejecuta:
+   javac APE4_Grafos.java
+   java APE4_Grafos
+
+3. Toma captura de pantalla de la consola mostrando:
+   - Resultado del algoritmo BFS
+   - Resultado del algoritmo Dijkstra
+
+4. Guarda la imagen como captura1.png en esta carpeta.
+
+RESULTADO ESPERADO EN CONSOLA:
+-------------------------------
+===== BFS =====
+(Ruta con menos paradas)
+Universidad (uta) -> Comedor (comedor) -> Estadio (estadio)
+
+===== DIJKSTRA =====
+(Ruta con menor distancia total)
+Universidad (uta) -> FISEI (fisei) -> Idiomas (idiomas) -> Biblioteca (biblioteca) -> Estadio (estadio)
