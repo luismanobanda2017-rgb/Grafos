@@ -1,24 +1,19 @@
 import java.util.*;
 
 /**
+ * Universidad Técnica de Ambato — FISEI
  * APE 4 — Grafos: Mapa del Campus UTA
  * Estructura de Datos — 3ro B Software
  * Autor: Luis Manobanda
- * Universidad Técnica de Ambato — FISEI
- *
- * Este programa implementa un grafo con lista de adyacencia
- * para representar rutas dentro del Campus Huachi de la UTA.
- * Se comparan los algoritmos BFS y Dijkstra para encontrar rutas.
  */
 public class APE4_Grafos {
 
     // ═══════════════════════════════════════
-    // Clase Nodo
-    // Representa una ubicación dentro del campus
+    // Clase Nodo — representa una ubicación del campus
     // ═══════════════════════════════════════
     static class Nodo {
-        String id;      // Identificador único del nodo (clave)
-        String nombre;  // Nombre legible del lugar
+        String id;
+        String nombre;
 
         public Nodo(String id, String nombre) {
             this.id = id;
@@ -27,12 +22,11 @@ public class APE4_Grafos {
     }
 
     // ═══════════════════════════════════════
-    // Clase Arista
-    // Representa una conexión entre dos nodos con distancia (peso)
+    // Clase Arista — conexión entre dos nodos con distancia
     // ═══════════════════════════════════════
     static class Arista {
-        String destino; // ID del nodo destino
-        int peso;       // Distancia o costo de la conexión
+        String destino;
+        int peso;
 
         public Arista(String destino, int peso) {
             this.destino = destino;
@@ -41,226 +35,212 @@ public class APE4_Grafos {
     }
 
     // ═══════════════════════════════════════
-    // Clase Grafo
-    // Estructura principal que contiene nodos y aristas
+    // Clase Grafo — estructura principal
     // ═══════════════════════════════════════
     static class Grafo {
 
-        // Mapa de nodos: clave = id del nodo, valor = objeto Nodo
-        Map<String, Nodo> nodos = new HashMap<>();
-
-        // Lista de adyacencia: clave = id del nodo, valor = lista de aristas salientes
+        Map<String, Nodo>         nodos      = new HashMap<>();
         Map<String, List<Arista>> adyacencia = new HashMap<>();
 
         // ═══════════════════════════════════
-        // TODO 1 — COMPLETADO
-        // Agregar nodo al grafo
+        // TODO 1 — Agregar nodo al grafo
         // ═══════════════════════════════════
         public void agregarNodo(String id, String nombre) {
-
-            // Crear el objeto Nodo con su ID y nombre
-            Nodo nuevoNodo = new Nodo(id, nombre);
-
-            // Registrar el nodo en el mapa de nodos
-            nodos.put(id, nuevoNodo);
-
-            // Inicializar la lista de adyacencia vacía para este nodo
-            // (lista donde se guardarán sus vecinos/conexiones)
+            // Crear el nodo y registrarlo en el mapa
+            nodos.put(id, new Nodo(id, nombre));
+            // Inicializar lista de vecinos vacía
             adyacencia.put(id, new ArrayList<>());
+
+            System.out.println("  [+] Nodo     : " + nombre + " (" + id + ")");
         }
 
         // ═══════════════════════════════════
-        // TODO 2 — COMPLETADO
-        // Agregar arista no dirigida (bidireccional)
+        // TODO 2 — Agregar arista no dirigida (bidireccional)
         // ═══════════════════════════════════
         public void agregarArista(String origen, String destino, int peso) {
-
-            // Agregar conexión de origen → destino con el peso dado
+            // Conexión origen → destino
             adyacencia.get(origen).add(new Arista(destino, peso));
-
-            // Agregar conexión inversa destino → origen (grafo no dirigido)
-            // Esto permite moverse en ambas direcciones entre los nodos
+            // Conexión inversa destino → origen
             adyacencia.get(destino).add(new Arista(origen, peso));
+
+            System.out.println("  [~] Arista   : "
+                    + nodos.get(origen).nombre
+                    + " <--[" + peso + "m]--> "
+                    + nodos.get(destino).nombre);
         }
 
         // ═══════════════════════════════════
-        // TODO 3 — COMPLETADO — BFS
-        // Ruta con menos paradas (sin considerar pesos)
-        // Breadth-First Search: recorre por niveles (anchura)
+        // TODO 3 — BFS: ruta con menos paradas
         // ═══════════════════════════════════
         public List<String> bfs(String inicio, String fin) {
 
-            // Cola para recorrer niveles — cada elemento es un camino completo
+            // Cola FIFO — cada elemento es un camino completo
             Queue<List<String>> cola = new LinkedList<>();
-
-            // Conjunto de nodos ya visitados para evitar ciclos
+            // Visitados para evitar ciclos
             Set<String> visitados = new HashSet<>();
 
-            // Camino inicial que solo contiene el nodo de partida
+            // Camino inicial con el nodo de partida
             List<String> caminoInicial = new ArrayList<>();
+            caminoInicial.add(inicio);   // Agregar inicio al camino
+            cola.add(caminoInicial);     // Encolar camino inicial
+            visitados.add(inicio);       // Marcar inicio como visitado
 
-            // Agregar nodo inicio al camino inicial
-            caminoInicial.add(inicio);
-
-            // Agregar el camino inicial a la cola de exploración
-            cola.add(caminoInicial);
-
-            // Marcar el nodo de inicio como visitado
-            visitados.add(inicio);
-
-            // Mientras haya caminos por explorar en la cola
             while (!cola.isEmpty()) {
-
-                // Obtener el primer camino de la cola (FIFO)
+                // Obtener el primer camino de la cola
                 List<String> camino = cola.poll();
-
-                // El nodo actual es el último del camino explorado
+                // Nodo actual = último del camino
                 String actual = camino.get(camino.size() - 1);
 
-                // Si llegamos al destino, retornamos el camino encontrado
-                if (actual.equals(fin)) {
-                    return camino;
-                }
+                // Si llegamos al destino, retornar camino
+                if (actual.equals(fin)) return camino;
 
-                // Recorrer todos los vecinos del nodo actual
+                // Explorar vecinos no visitados
                 for (Arista arista : adyacencia.get(actual)) {
-
-                    // Verificar si el vecino NO fue visitado previamente
                     if (!visitados.contains(arista.destino)) {
-
-                        // Marcar vecino como visitado para no procesarlo de nuevo
                         visitados.add(arista.destino);
-
-                        // Crear nuevo camino copiando el camino actual
                         List<String> nuevoCamino = new ArrayList<>(camino);
-
-                        // Agregar el vecino al nuevo camino
                         nuevoCamino.add(arista.destino);
-
-                        // Agregar el nuevo camino extendido a la cola
                         cola.add(nuevoCamino);
                     }
                 }
             }
-
-            // Si se agotó la cola sin encontrar destino, no existe ruta
             return null;
         }
 
         // ═══════════════════════════════════
-        // TODO 4 — COMPLETADO — Dijkstra
-        // Ruta con menor distancia total (considera pesos)
+        // TODO 4 — Dijkstra: ruta con menor distancia
         // ═══════════════════════════════════
         public List<String> dijkstra(String inicio, String fin) {
 
-            // Mapa de distancias mínimas conocidas desde el inicio hacia cada nodo
+            // Distancias mínimas desde el inicio a cada nodo
             Map<String, Integer> distancias = new HashMap<>();
+            // Nodo anterior en el camino óptimo
+            Map<String, String>  anteriores = new HashMap<>();
 
-            // Mapa de nodo anterior en el camino óptimo (para reconstruir la ruta)
-            Map<String, String> anteriores = new HashMap<>();
-
-            // Cola de prioridad que siempre extrae el nodo con menor distancia acumulada
+            // Cola de prioridad ordenada por menor distancia acumulada
             PriorityQueue<String> cola = new PriorityQueue<>(
                     Comparator.comparingInt(distancias::get)
             );
 
-            // Inicializar todas las distancias como "infinito" (Integer.MAX_VALUE)
-            // Esto indica que aún no conocemos cómo llegar a esos nodos
+            // Inicializar todas las distancias en infinito
             for (String nodo : nodos.keySet()) {
                 distancias.put(nodo, Integer.MAX_VALUE);
             }
 
-            // La distancia del nodo de inicio a sí mismo es 0
+            // Distancia al inicio = 0, agregar a la cola
             distancias.put(inicio, 0);
-
-            // Agregar el nodo de inicio a la cola de prioridad
             cola.add(inicio);
 
-            // Procesar nodos mientras la cola no esté vacía
             while (!cola.isEmpty()) {
-
-                // Obtener el nodo con la menor distancia acumulada
+                // Extraer nodo con menor distancia acumulada
                 String actual = cola.poll();
 
-                // Explorar todas las aristas salientes del nodo actual
                 for (Arista arista : adyacencia.get(actual)) {
-
-                    // Calcular la nueva distancia pasando por el nodo actual
+                    // Calcular nueva distancia pasando por el nodo actual
                     int nuevaDistancia = distancias.get(actual) + arista.peso;
 
-                    // Si la nueva distancia es menor a la distancia conocida del vecino
+                    // Si encontramos camino más corto al vecino, actualizar
                     if (nuevaDistancia < distancias.get(arista.destino)) {
-
-                        // Actualizar la distancia mínima al vecino
                         distancias.put(arista.destino, nuevaDistancia);
-
-                        // Guardar el nodo actual como anterior del vecino (para reconstruir ruta)
                         anteriores.put(arista.destino, actual);
-
-                        // Agregar el vecino a la cola para procesar con la nueva distancia
                         cola.add(arista.destino);
                     }
                 }
             }
 
-            // ─────────────────────────────────
-            // Reconstruir el camino óptimo
-            // Se recorre el mapa de anteriores desde el fin hasta el inicio
-            // ─────────────────────────────────
+            // Reconstruir camino desde fin hacia inicio
             List<String> camino = new ArrayList<>();
-
             String actual = fin;
-
-            // Retroceder desde el nodo destino hasta el origen usando el mapa de anteriores
             while (actual != null) {
-                camino.add(0, actual); // Insertar al inicio para mantener orden correcto
+                camino.add(0, actual);
                 actual = anteriores.get(actual);
             }
-
             return camino;
         }
 
         // ═══════════════════════════════════
-        // Mostrar resultado en consola
-        // Imprime la ruta con nombres legibles de los nodos
+        // Mostrar ruta con distancias entre paradas
         // ═══════════════════════════════════
         public void mostrarRuta(List<String> ruta) {
-
-            if (ruta == null) {
-                System.out.println("No existe ruta");
+            if (ruta == null || ruta.size() <= 1) {
+                System.out.println("  No existe ruta.");
                 return;
             }
 
+            int distanciaTotal = 0;
+            StringBuilder sb = new StringBuilder("  ");
+
             for (int i = 0; i < ruta.size(); i++) {
+                Nodo nodo = nodos.get(ruta.get(i));
+                sb.append(nodo.nombre).append(" (").append(nodo.id).append(")");
 
-                String idNodo = ruta.get(i);
-
-                Nodo nodo = nodos.get(idNodo);
-
-                // Mostrar nombre e ID del nodo
-                System.out.print(nodo.nombre + " (" + nodo.id + ")");
-
-                // Separar nodos con flecha excepto el último
                 if (i < ruta.size() - 1) {
-                    System.out.print(" -> ");
+                    int peso = getPeso(ruta.get(i), ruta.get(i + 1));
+                    distanciaTotal += peso;
+                    sb.append(" -> ");
                 }
             }
 
-            System.out.println();
+            System.out.println(sb);
+            System.out.println("  Paradas   : " + (ruta.size() - 1));
+            System.out.println("  Distancia : " + distanciaTotal + " m");
+        }
+
+        // Obtener peso de arista entre dos nodos
+        private int getPeso(String origen, String destino) {
+            for (Arista a : adyacencia.get(origen)) {
+                if (a.destino.equals(destino)) return a.peso;
+            }
+            return 0;
+        }
+
+        // Mostrar lista de adyacencia completa
+        public void mostrarAdyacencia() {
+            for (String id : new TreeMap<>(nodos).keySet()) {
+                System.out.print("  " + nodos.get(id).nombre + " -> ");
+                List<Arista> vecinos = adyacencia.get(id);
+                for (int i = 0; i < vecinos.size(); i++) {
+                    Arista a = vecinos.get(i);
+                    System.out.print(nodos.get(a.destino).nombre + " [" + a.peso + "m]");
+                    if (i < vecinos.size() - 1) System.out.print(", ");
+                }
+                System.out.println();
+            }
         }
     }
 
+    // ─────────────────────────────────────
+    // Helpers visuales para la consola
+    // ─────────────────────────────────────
+    static void separador() {
+        System.out.println("  " + "-".repeat(56));
+    }
+
+    static void encabezado(String texto) {
+        int ancho = 54;
+        System.out.println("\n  ╔" + "═".repeat(ancho) + "╗");
+        System.out.printf(  "  ║  %-" + (ancho-2) + "s║%n", texto);
+        System.out.println("  ╚" + "═".repeat(ancho) + "╝");
+    }
+
     // ═══════════════════════════════════════
-    // MAIN — Punto de entrada del programa
+    // MAIN
     // ═══════════════════════════════════════
     public static void main(String[] args) {
 
-        // Crear instancia del grafo
+        // ── Portada ──────────────────────────────────────
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════════════════════╗");
+        System.out.println("  ║        Universidad Tecnica de Ambato - FISEI         ║");
+        System.out.println("  ║        APE 4 - Grafos: Mapa del Campus UTA           ║");
+        System.out.println("  ║        Estructura de Datos - 3ro B Software          ║");
+        System.out.println("  ║        Autor : Luis Manobanda                        ║");
+        System.out.println("  ╚══════════════════════════════════════════════════════╝");
+
         Grafo grafo = new Grafo();
 
-        // ─────────────────────────────────
-        // NODOS — Ubicaciones del campus UTA
-        // ─────────────────────────────────
+        // ── Nodos ────────────────────────────────────────
+        encabezado("PASO 1 - Agregar Nodos");
         grafo.agregarNodo("uta",        "Universidad");
         grafo.agregarNodo("fisei",      "FISEI");
         grafo.agregarNodo("idiomas",    "Idiomas");
@@ -268,35 +248,58 @@ public class APE4_Grafos {
         grafo.agregarNodo("estadio",    "Estadio");
         grafo.agregarNodo("comedor",    "Comedor");
 
-        // ─────────────────────────────────
-        // ARISTAS — Conexiones entre lugares
-        // ─────────────────────────────────
-        // Ruta larga pero con menos paradas intermedias hacia el estadio
-        grafo.agregarArista("uta",       "fisei",      50);
-        grafo.agregarArista("fisei",     "idiomas",    40);
-        grafo.agregarArista("idiomas",   "biblioteca", 30);
-        grafo.agregarArista("biblioteca","estadio",    70);
+        // ── Aristas ──────────────────────────────────────
+        encabezado("PASO 2 - Agregar Aristas (Rutas)");
+        grafo.agregarArista("uta",        "fisei",      50);
+        grafo.agregarArista("fisei",      "idiomas",    40);
+        grafo.agregarArista("idiomas",    "biblioteca", 30);
+        grafo.agregarArista("biblioteca", "estadio",    70);
+        grafo.agregarArista("uta",        "comedor",    20);
+        grafo.agregarArista("comedor",    "estadio",   200);
 
-        // Ruta con menos paradas pero mayor distancia total
-        // BFS preferirá esta (2 saltos vs 4 saltos)
-        // Dijkstra preferirá la ruta larga (190 vs 220 de costo total)
-        grafo.agregarArista("uta",     "comedor", 20);
-        grafo.agregarArista("comedor", "estadio", 200);
+        // ── Lista de adyacencia ──────────────────────────
+        encabezado("PASO 3 - Lista de Adyacencia");
+        grafo.mostrarAdyacencia();
 
-        // ═══════════════════════════════════
-        // PRUEBAS — Ejecutar ambos algoritmos
-        // ═══════════════════════════════════
-
-        System.out.println("===== BFS =====");
-        System.out.println("(Ruta con menos paradas)");
+        // ── BFS ──────────────────────────────────────────
+        encabezado("PASO 4 - BFS (Ruta con menos paradas)");
+        System.out.println("  Origen  : Universidad (uta)");
+        System.out.println("  Destino : Estadio (estadio)");
+        separador();
 
         List<String> rutaBFS = grafo.bfs("uta", "estadio");
+
+        System.out.println();
+        System.out.println("  ===== BFS =====");
+        System.out.println("  (Ruta con menos paradas)");
         grafo.mostrarRuta(rutaBFS);
 
-        System.out.println("\n===== DIJKSTRA =====");
-        System.out.println("(Ruta con menor distancia total)");
+        // ── Dijkstra ─────────────────────────────────────
+        encabezado("PASO 5 - Dijkstra (Ruta con menor distancia)");
+        System.out.println("  Origen  : Universidad (uta)");
+        System.out.println("  Destino : Estadio (estadio)");
+        separador();
 
         List<String> rutaDijkstra = grafo.dijkstra("uta", "estadio");
+
+        System.out.println();
+        System.out.println("  ===== DIJKSTRA =====");
+        System.out.println("  (Ruta con menor distancia total)");
         grafo.mostrarRuta(rutaDijkstra);
+
+        // ── Comparativa ──────────────────────────────────
+        encabezado("PASO 6 - Comparativa Final");
+        System.out.println("  Algoritmo   Paradas   Distancia");
+        separador();
+        System.out.printf("  %-12s %-9s %s%n", "BFS",      "2 saltos", "220 m  ->  uta -> comedor -> estadio");
+        System.out.printf("  %-12s %-9s %s%n", "Dijkstra", "4 saltos", "190 m  ->  uta -> fisei -> idiomas -> biblioteca -> estadio");
+        separador();
+        System.out.println("  BFS      => menos paradas, mayor distancia");
+        System.out.println("  Dijkstra => mas paradas,   menor distancia");
+        System.out.println();
+        System.out.println("  ╔══════════════════════════════════════════════════════╗");
+        System.out.println("  ║                  Fin del programa                    ║");
+        System.out.println("  ╚══════════════════════════════════════════════════════╝");
+        System.out.println();
     }
 }
