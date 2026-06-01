@@ -42,35 +42,37 @@ usando dos criterios distintos:
 
 ### Ubicaciones del Campus (Nodos)
 
-  ID             Nombre
-  -------------- -------------
-  uta            Universidad
-  fisei          FISEI
-  idiomas        Idiomas
-  biblioteca     Biblioteca
-  estadio        Estadio
-  comedor        Comedor
+| ID       | Nombre       |
+|----------|--------------|
+| uta      | Universidad  |
+| fisei    | FISEI        |
+| idiomas  | Idiomas      |
+| biblioteca | Biblioteca |
+| estadio  | Estadio      |
+| comedor  | Comedor      |
 
 ### Conexiones del Campus (Aristas)
 
-  Origen         Destino        Distancia
-  -------------- -------------- ----------
-  Universidad    FISEI          50 m
-  FISEI          Idiomas        40 m
-  Idiomas        Biblioteca     30 m
-  Biblioteca     Estadio        70 m
-  Universidad    Comedor        20 m
-  Comedor        Estadio        200 m
+| Origen       | Destino     | Distancia |
+|--------------|-------------|-----------:
+| Universidad  | FISEI       | 50 m      |
+| FISEI        | Idiomas     | 40 m      |
+| Idiomas      | Biblioteca  | 30 m      |
+| Biblioteca   | Estadio     | 70 m      |
+| Universidad  | Comedor     | 20 m      |
+| Comedor      | Estadio     | 200 m     |
 
 ### Mapa visual del grafo
 
-  Universidad (uta)
-      │
-      ├──[50]── FISEI ──[40]── Idiomas ──[30]── Biblioteca ──[70]── Estadio ###
-      │                                                                  ▲
-      └──[20]── Comedor ─────────────────────────────────[200]───────────┘
+```text
+Universidad (uta)
+  │
+  ├──[50]── FISEI ──[40]── Idiomas ──[30]── Biblioteca ──[70]── Estadio
+  │                                                         ▲
+  └──[20]── Comedor ───────────────────────────────[200]───┘
+```
 
-  Nota: Las aristas son no dirigidas (bidireccionales).
+Nota: Las aristas son no dirigidas (bidireccionales).
 
 ---
 
@@ -100,68 +102,79 @@ usando dos criterios distintos:
 
 ## 💻 Implementación
 
+
 ### Estructura de clases
 
-  APE4_Grafos
-  ├── Nodo          → id, nombre
-  ├── Arista        → destino, peso
-  └── Grafo
-      ├── nodos            (HashMap)
-      ├── adyacencia       (HashMap de listas)
-      ├── agregarNodo()
-      ├── agregarArista()
-      ├── bfs()
-      ├── dijkstra()
-      ├── mostrarRuta()
-      └── mostrarAdyacencia()
+```text
+APE4_Grafos
+├── Nodo      → id, nombre
+├── Arista    → destino, peso
+└── Grafo
+  ├── nodos          (HashMap)
+  ├── adyacencia     (HashMap<String, List<Arista>>)
+  ├── agregarNodo()
+  ├── agregarArista()
+  ├── bfs()
+  ├── dijkstra()
+  ├── mostrarRuta()
+  └── mostrarAdyacencia()
+```
 
 ### Método agregarNodo()
 
-  public void agregarNodo(String id, String nombre) {
-      nodos.put(id, new Nodo(id, nombre));
-      adyacencia.put(id, new ArrayList<>());
-  }
+```java
+public void agregarNodo(String id, String nombre) {
+  nodos.put(id, new Nodo(id, nombre));
+  adyacencia.put(id, new ArrayList<>());
+}
+```
 
 ### Método agregarArista()
 
-  public void agregarArista(String origen, String destino, int peso) {
-      adyacencia.get(origen).add(new Arista(destino, peso));
-      adyacencia.get(destino).add(new Arista(origen, peso));
-  }
+```java
+public void agregarArista(String origen, String destino, int peso) {
+  adyacencia.get(origen).add(new Arista(destino, peso));
+  adyacencia.get(destino).add(new Arista(origen, peso));
+}
+```
 
 ### Algoritmo BFS (fragmento clave)
 
-  while (!cola.isEmpty()) {
-      List<String> camino = cola.poll();
-      String actual = camino.get(camino.size() - 1);
+```java
+while (!cola.isEmpty()) {
+  List<String> camino = cola.poll();
+  String actual = camino.get(camino.size() - 1);
 
-      if (actual.equals(fin)) return camino;
+  if (actual.equals(fin)) return camino;
 
-      for (Arista arista : adyacencia.get(actual)) {
-          if (!visitados.contains(arista.destino)) {
-              visitados.add(arista.destino);
-              List<String> nuevoCamino = new ArrayList<>(camino);
-              nuevoCamino.add(arista.destino);
-              cola.add(nuevoCamino);
-          }
-      }
+  for (Arista arista : adyacencia.get(actual)) {
+    if (!visitados.contains(arista.destino)) {
+      visitados.add(arista.destino);
+      List<String> nuevoCamino = new ArrayList<>(camino);
+      nuevoCamino.add(arista.destino);
+      cola.add(nuevoCamino);
+    }
   }
+}
+```
 
 ### Algoritmo Dijkstra (fragmento clave)
 
-  while (!cola.isEmpty()) {
-      String actual = cola.poll();
+```java
+while (!cola.isEmpty()) {
+  String actual = cola.poll();
 
-      for (Arista arista : adyacencia.get(actual)) {
-          int nuevaDistancia = distancias.get(actual) + arista.peso;
+  for (Arista arista : adyacencia.get(actual)) {
+    int nuevaDistancia = distancias.get(actual) + arista.peso;
 
-          if (nuevaDistancia < distancias.get(arista.destino)) {
-              distancias.put(arista.destino, nuevaDistancia);
-              anteriores.put(arista.destino, actual);
-              cola.add(arista.destino);
-          }
-      }
+    if (nuevaDistancia < distancias.get(arista.destino)) {
+      distancias.put(arista.destino, nuevaDistancia);
+      anteriores.put(arista.destino, actual);
+      cola.add(arista.destino);
+    }
   }
+}
+```
 
 ---
 
@@ -208,32 +221,34 @@ usando dos criterios distintos:
 
 ### Salida en consola
 
-  ╔══════════════════════════════════════════════════════╗
-  ║        Universidad Tecnica de Ambato - FISEI         ║
-  ║        APE 4 - Grafos: Mapa del Campus UTA           ║
-  ║        Estructura de Datos - 3ro B Software          ║
-  ║        Autor : Luis Manobanda                        ║
-  ╚══════════════════════════════════════════════════════╝
+```text
+╔══════════════════════════════════════════════════════╗
+║        Universidad Tecnica de Ambato - FISEI         ║
+║        APE 4 - Grafos: Mapa del Campus UTA           ║
+║        Estructura de Datos - 3ro B Software          ║
+║        Autor : Luis Manobanda                        ║
+╚══════════════════════════════════════════════════════╝
 
-  ╔════════════════════════════════════════════════════════╗
-  ║  PASO 4 - BFS (Ruta con menos paradas)                 ║
-  ╚════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════╗
+║  PASO 4 - BFS (Ruta con menos paradas)                 ║
+╚════════════════════════════════════════════════════════╝
 
-  ===== BFS =====
-  (Ruta con menos paradas)
-  Universidad (uta) -> Comedor (comedor) -> Estadio (estadio)
-  Paradas   : 2
-  Distancia : 220 m
+===== BFS =====
+(Ruta con menos paradas)
+Universidad (uta) -> Comedor (comedor) -> Estadio (estadio)
+Paradas   : 2
+Distancia : 220 m
 
-  ╔════════════════════════════════════════════════════════╗
-  ║  PASO 5 - Dijkstra (Ruta con menor distancia)          ║
-  ╚════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════╗
+║  PASO 5 - Dijkstra (Ruta con menor distancia)          ║
+╚════════════════════════════════════════════════════════╝
 
-  ===== DIJKSTRA =====
-  (Ruta con menor distancia total)
-  Universidad (uta) -> FISEI (fisei) -> Idiomas (idiomas) -> Biblioteca (biblioteca) -> Estadio (estadio)
-  Paradas   : 4
-  Distancia : 190 m
+===== DIJKSTRA =====
+(Ruta con menor distancia total)
+Universidad (uta) -> FISEI (fisei) -> Idiomas (idiomas) -> Biblioteca (biblioteca) -> Estadio (estadio)
+Paradas   : 4
+Distancia : 190 m
+```
 
 ---
 
@@ -259,29 +274,37 @@ usando dos criterios distintos:
 
 ## ⚙️ Compilación y Ejecución
 
-  Requisitos: Java JDK 8 o superior
+Requisitos: Java JDK 8 o superior
 
-  Compilar:
-    cd src
-    javac APE4_Grafos.java
+Compilar:
 
-  Ejecutar:
-    java APE4_Grafos
+```bash
+cd src
+javac APE4_Grafos.java
+```
+
+Ejecutar:
+
+```bash
+java APE4_Grafos
+```
 
 ---
 
 ## 📁 Estructura del Proyecto
 
-  Proyecto_APE4/
-  │
-  ├── src/
-  │   └── APE4_Grafos.java       ← Código fuente completo y comentado
-  │
-  ├── captura/
-  │   └── captura1.png           ← Captura de pantalla de la ejecución
-  │
-  ├── README-Grupo8.md           ← README original de la actividad
-  └── README.md                  ← Documentación completa
+```text
+Proyecto_APE4/
+│
+├── src/
+│   └── APE4_Grafos.java       ← Código fuente completo y comentado
+│
+├── captura/
+│   └── captura1.png           ← Captura de pantalla de la ejecución
+│
+├── README-Grupo8.md           ← README original de la actividad
+└── README.md                  ← Documentación completa
+```
 
 ---
 
