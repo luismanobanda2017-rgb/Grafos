@@ -240,13 +240,14 @@ Distancia : 190 m
 
 ## 🔍 Análisis Comparativo
 
+```text
   Criterio           BFS                       Dijkstra
   ------------------ ------------------------- ----------------------------------------
   Ruta encontrada    uta→comedor→estadio        uta→fisei→idiomas→biblioteca→estadio
   Paradas            2 paradas (menor)          4 paradas
   Distancia total    20+200 = 220 m             50+40+30+70 = 190 m (menor)
   Considera pesos    No                         Sí
-
+```
 ### Conclusión
 
   - BFS elige la ruta por el Comedor porque llega al Estadio en solo 2 saltos.
